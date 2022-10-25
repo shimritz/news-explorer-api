@@ -1,0 +1,21 @@
+{
+  "name": "news-explorer",
+  "version": "1.0.0",
+  "description": "news-explorer back-end",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shimritz/news-explorer-api.git"
+  },
+  "author": "shimrit breef ziskand",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shimritz/news-explorer-api/issues"
+  },
+  "homepage": "https://github.com/shimritz/news-explorer-api#readme"
+}
