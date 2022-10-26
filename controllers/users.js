@@ -59,7 +59,23 @@ const login = (req, res, next) => {
     });
 };
 
+const getUserById = (req, res, next) => {
+  const { id } = req.params;
+  Users.findById(id)
+
+    .orFail(() => console.log("User with specified id is not found"))
+    .then((user) => {
+      res.status(200).send({ data: user });
+    })
+    .catch(next);
+};
+const getCurrentUser = (req, res, next) => {
+  getUserById(req, res, next);
+};
+
 module.exports = {
   createUser,
   login,
+  getUserById,
+  getCurrentUser,
 };
