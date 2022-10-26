@@ -1,5 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -27,5 +29,23 @@ const userSchema = new mongoose.Schema(
   },
   { versionKey: false }
 );
+
+userSchema.statics.findUserByCredentials = function (email, password) {
+  return this.findOne({ email })
+    .select("+password")
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error("Incorrect email of password"));
+      }
+
+      return bcrypt.compare(password, user.password).then((match) => {
+        if (!match) {
+          return Promise.reject(new Error("Incorrect email of password"));
+        }
+
+        return user;
+      });
+    });
+};
 
 module.exports = mongoose.model("user", userSchema);

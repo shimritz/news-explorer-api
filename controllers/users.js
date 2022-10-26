@@ -1,5 +1,7 @@
 const Users = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
 
 const createUser = (req, res, next) => {
   // eslint-disable-next-line object-curly-newline
@@ -40,6 +42,24 @@ const createUser = (req, res, next) => {
     });
 };
 
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  return Users.findUserByCredentials(email, password)
+    .then((user) => {
+      console.log("in login");
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      res.send({ data: user.toJSON(), token });
+    })
+    .catch((err) => {
+      // next(new UnauthorizedError("Incorrect email or password"));
+      console.log(err);
+    });
+};
+
 module.exports = {
   createUser,
+  login,
 };
