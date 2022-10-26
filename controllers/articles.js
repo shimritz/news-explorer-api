@@ -32,8 +32,24 @@ const createArticle = (req, res, next) => {
     });
 };
 //delete article
+const deleteArticle = (req, res, next) => {
+  const { id } = req.params;
+  Article.findById(id)
+    // .orFail(() => new NotFoundError("No card found for the specified id"))
+    .orFail(() => console.log("not found err"))
+    .then((article) => {
+      //   if (!article.owner.equals(req.user._id)) {
+      //     next(new ForbiddenError("You cannot delete someone elses article"));
+      //   } else {
+      Article.deleteOne(article).then(() => res.send({ data: article }));
+      //   }
+    })
+
+    .catch((err) => console.log(err));
+};
 
 module.exports = {
   getSavedArticles,
   createArticle,
+  deleteArticle,
 };
