@@ -2,7 +2,8 @@ const Article = require("../models/article");
 
 const getSavedArticles = (req, res, next) =>
   Article.find({})
-    .then((articleSchema) => res.status(200).send({ data: articles }))
+    //TODO: get only saved articles and not all articles in db
+    .then((articles) => res.status(200).send({ data: articles }))
     .catch((err) => {
       console.log(err);
     });
