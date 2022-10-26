@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const articleSchema = new mongoose.Schema({
   keyword: {
     type: String,
@@ -27,14 +29,17 @@ const articleSchema = new mongoose.Schema({
     },
   },
   image: {
-    String,
+    type: String,
     required: true,
     validate: {
       validator: (v) => validator.isURL(v),
     },
   },
   owner: {
-    type: ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     select: false,
+    ref: user,
   },
 });
+
+module.exports = mongoose.model("article", articleSchema);
