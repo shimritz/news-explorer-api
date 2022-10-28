@@ -1,8 +1,10 @@
 const express = require("express");
 
 const router = require("express").Router();
+const { errors } = require("celebrate");
 const mongoose = require("mongoose");
 const auth = require("./middleware/auth");
+const { errorHandler } = require("./middleware/error-handler");
 const { DB_ADDRESS } = require("./utils/config");
 
 mongoose.connect(DB_ADDRESS);
@@ -24,10 +26,8 @@ router.use("/articles", articleRouter);
 router.use("/users", userRouter);
 
 app.use("/", router);
-
-// app.use(errors());
-
-// app.use(errorHandler);
+app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, (err) => {
   if (err) console.log(err);

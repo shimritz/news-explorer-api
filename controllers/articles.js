@@ -1,5 +1,7 @@
 const Article = require("../models/article");
 const { login } = require("./users");
+const NotFoundError = require("../errors/not-found-error");
+const BadRequestError = require("../errors/bad-request-error");
 
 const getSavedArticles = (req, res, next) => {
   const ownerId = req.user._id;
@@ -8,9 +10,7 @@ const getSavedArticles = (req, res, next) => {
     //TODO: get only saved articles and not all articles in db
     // if (!article.owner.equals(req.user._id))
     .then((articles) => res.status(200).send({ data: articles }))
-    .catch((err) => {
-      console.log(err);
-    });
+    .catch(next);
 };
 //create article
 
@@ -30,19 +30,18 @@ const createArticle = (req, res, next) => {
   })
     .then((article) => res.status(201).send({ data: article }))
     .catch((err) => {
-      //   if (err.name === "ValidationError") {
-      //     next(new BadRequestError("Data format is incorrect"));
-      console.log(err);
-      //   } else {
-      //     next(err);
-      //   }
+      if (err.name === "ValidationError") {
+        next(new BadRequestError("Data format is incorrect"));
+      } else {
+        next(err);
+      }
     });
 };
 //delete article
 const deleteArticle = (req, res, next) => {
   const { id } = req.params;
   Article.findById(id)
-    // .orFail(() => new NotFoundError("No card found for the specified id"))
+    .orFail(() => new NotFoundError("No card found for the specified id"))
     .orFail(() => console.log("not found err"))
     .then((article) => {
       //   if (!article.owner.equals(req.user._id)) {
@@ -52,7 +51,7 @@ const deleteArticle = (req, res, next) => {
       //   }
     })
 
-    .catch((err) => console.log(err));
+    .catch(next);
 };
 
 module.exports = {
