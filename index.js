@@ -2,10 +2,10 @@ const express = require("express");
 
 const router = require("express").Router();
 const mongoose = require("mongoose");
-// const { DB_ADDRESS } = require("./utils/config");
+const auth = require("./middleware/auth");
+const { DB_ADDRESS } = require("./utils/config");
 
-// mongoose.connect(DB_ADDRESS);
-mongoose.connect("mongodb://localhost:27017/newsdb");
+mongoose.connect(DB_ADDRESS);
 const { PORT = 3000 } = process.env;
 const app = express();
 
@@ -18,10 +18,16 @@ const { createUser, login } = require("./controllers/users");
 
 app.post("/signup", createUser);
 app.post("/signin", login);
-app.use("/", router);
-router.use("/articles", articleRouter);
 
+router.use(auth);
+router.use("/articles", articleRouter);
 router.use("/users", userRouter);
+
+app.use("/", router);
+
+// app.use(errors());
+
+// app.use(errorHandler);
 
 app.listen(PORT, (err) => {
   if (err) console.log(err);

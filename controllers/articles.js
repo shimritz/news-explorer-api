@@ -1,17 +1,23 @@
 const Article = require("../models/article");
+const { login } = require("./users");
 
-const getSavedArticles = (req, res, next) =>
-  Article.find({})
+const getSavedArticles = (req, res, next) => {
+  const ownerId = req.user._id;
+
+  Article.find({ owner: ownerId })
     //TODO: get only saved articles and not all articles in db
+    // if (!article.owner.equals(req.user._id))
     .then((articles) => res.status(200).send({ data: articles }))
     .catch((err) => {
       console.log(err);
     });
+};
 //create article
 
 const createArticle = (req, res, next) => {
+  const owner = req.user._id;
   const { keyword, title, text, date, source, link, image } = req.body;
-  //   const owner = req.user._id;
+
   Article.create({
     keyword,
     title,
@@ -20,6 +26,7 @@ const createArticle = (req, res, next) => {
     source,
     link,
     image,
+    owner,
   })
     .then((article) => res.status(201).send({ data: article }))
     .catch((err) => {
