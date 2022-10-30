@@ -4,6 +4,7 @@ const router = require("express").Router();
 const { errors } = require("celebrate");
 const mongoose = require("mongoose");
 const auth = require("./middleware/auth");
+const { requestLogger, errorLogger } = require("./middlewares/logger");
 const { errorHandler } = require("./middleware/error-handler");
 const {
   validateAuthentication,
@@ -32,6 +33,8 @@ router.use("/users", userRouter);
 app.use("/", router);
 app.use(errors());
 app.use(errorHandler);
+
+app.use(requestLogger);
 
 app.listen(PORT, (err) => {
   if (err) console.log(err);
