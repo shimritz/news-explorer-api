@@ -2,11 +2,11 @@
   "name": "news-explorer",
   "version": "1.0.0",
   "description": "news-explorer back-end",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js",
-    "nm": "nodemon index.js",
-    "dev": "nodemon index.js",
+    "start": "node app.js",
+    "nm": "nodemon app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
