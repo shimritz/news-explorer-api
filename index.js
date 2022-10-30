@@ -5,6 +5,10 @@ const { errors } = require("celebrate");
 const mongoose = require("mongoose");
 const auth = require("./middleware/auth");
 const { errorHandler } = require("./middleware/error-handler");
+const {
+  validateAuthentication,
+  validateUser,
+} = require("./middleware/validation");
 const { DB_ADDRESS } = require("./utils/config");
 
 mongoose.connect(DB_ADDRESS);
@@ -18,8 +22,8 @@ const articleRouter = require("./routes/articles");
 const userRouter = require("./routes/users");
 const { createUser, login } = require("./controllers/users");
 
-app.post("/signup", createUser);
-app.post("/signin", login);
+app.post("/signup", validateUser, createUser);
+app.post("/signin", validateAuthentication, login);
 
 router.use(auth);
 router.use("/articles", articleRouter);
