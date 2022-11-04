@@ -1,19 +1,23 @@
-const Article = require("../models/article");
-const { login } = require("./users");
-const NotFoundError = require("../errors/not-found-error");
-const BadRequestError = require("../errors/bad-request-error");
+const Article = require('../models/article');
+const NotFoundError = require('../errors/not-found-error');
+const BadRequestError = require('../errors/bad-request-error');
+const ForbiddenError = require('../errors/forbidden-error');
+const InternalError = require('../errors/internal-error');
+const { internalLogger } = require('../utils/logger');
 
 const getSavedArticles = (req, res, next) => {
   const ownerId = req.user._id;
 
   Article.find({ owner: ownerId })
-    //TODO: get only saved articles and not all articles in db
-    // if (!article.owner.equals(req.user._id))
+    .orFail(() => new NotFoundError('No articles found'))
     .then((articles) => res.status(200).send({ data: articles }))
-    .catch(next);
+    .catch((err) => {
+      internalLogger.error('getSavedArticles:', err);
+      next(new InternalError('Somethig went wrong'));
+    });
 };
-//create article
 
+// create article
 const createArticle = (req, res, next) => {
   const owner = req.user._id;
   const { keyword, title, text, date, source, link, image } = req.body;
@@ -30,28 +34,35 @@ const createArticle = (req, res, next) => {
   })
     .then((article) => res.status(201).send({ data: article }))
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        next(new BadRequestError("Data format is incorrect"));
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Data format is incorrect'));
       } else {
-        next(err);
+        internalLogger.error('createArticle:', err);
+        next(new InternalError('Something went wrong'));
       }
     });
 };
-//delete article
+
+// delete article
 const deleteArticle = (req, res, next) => {
   const { id } = req.params;
   Article.findById(id)
-    .orFail(() => new NotFoundError("No card found for the specified id"))
-    .orFail(() => console.log("not found err"))
+    .orFail(() => new NotFoundError('No article found for the specified id'))
     .then((article) => {
-      //   if (!article.owner.equals(req.user._id)) {
-      //     next(new ForbiddenError("You cannot delete someone elses article"));
-      //   } else {
-      Article.deleteOne(article).then(() => res.send({ data: article }));
-      //   }
+      if (!article.owner.equals(req.user._id)) {
+        internalLogger.error(
+          'deleteArticle:',
+          'article does not belong to the user'
+        );
+        next(new ForbiddenError('You cannot delete someone elses article'));
+      } else {
+        Article.deleteOne(article).then(() => res.send({ data: article }));
+      }
     })
-
-    .catch(next);
+    .catch((err) => {
+      internalLogger.error('deleteArticle:', err);
+      next(new InternalError('Something went wrong'));
+    });
 };
 
 module.exports = {

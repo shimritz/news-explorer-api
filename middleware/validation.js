@@ -1,7 +1,7 @@
 /* eslint-disable newline-per-chained-call */
-const { Joi, celebrate } = require("celebrate");
-const { isValidObjectId } = require("mongoose");
-const validator = require("validator");
+const { Joi, celebrate } = require('celebrate');
+const { isValidObjectId } = require('mongoose');
+const validator = require('validator');
 
 // eslint-disable-next-line operator-linebreak
 const UrlExp =
@@ -12,7 +12,7 @@ const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
     return value;
   }
-  return helpers.error("string.uri");
+  return helpers.error('string.uri');
 };
 
 const validateObjId = celebrate({
@@ -23,7 +23,7 @@ const validateObjId = celebrate({
         if (isValidObjectId(value)) {
           return value;
         }
-        return helpers.message("Invalid id");
+        return helpers.message('Invalid id');
       }),
   }),
 });
@@ -32,30 +32,26 @@ const validateArticle = celebrate({
   body: Joi.object().keys({
     // eslint-disable-next-line newline-per-chained-call
     keyword: Joi.string().required().messages({
-      "string.required": 'The "keyword" field must be filled in',
+      'string.required': 'The "keyword" field must be filled in',
     }),
     title: Joi.string().required().messages({
-      "string.empty": 'The "title" field must be filled in',
+      'string.empty': 'The "title" field must be filled in',
     }),
     text: Joi.string()
       .required()
-      .messages({ "string.empty": 'The "text" field must be filled in' }),
+      .messages({ 'string.empty': 'The "text" field must be filled in' }),
     date: Joi.string()
       .required()
-      .messages({ "string.empty": 'The "date" field must be filled in' }),
-    source: Joi.string()
-      .required()
-      .custom(validateURL)
-      .message('The "source" field must be filled in')
-      .messages({
-        "string.empty": 'The "link" field must be filled in',
-      }),
+      .messages({ 'string.empty': 'The "date" field must be filled in' }),
+    source: Joi.string().required().messages({
+      'string.empty': 'The "link" field must be filled in',
+    }),
     link: Joi.string()
       .required()
       .pattern(RegExp(UrlExp))
       .message('The "link" field must be a valid URL')
       .messages({
-        "string.empty": 'The "link" field must be filled in',
+        'string.empty': 'The "link" field must be filled in',
       }),
     image: Joi.string().required().custom(validateURL),
   }),
@@ -70,14 +66,14 @@ const validateUser = celebrate({
       .message('The "email" must be a valid email')
       .messages({
         // "string.email": 'The "email" must be a valid email',
-        "string.empty": 'The "email" field must be filled in',
+        'string.empty': 'The "email" field must be filled in',
       }),
     password: Joi.string().required().messages({
-      "string.empty": 'The "password" field must be filled in',
+      'string.empty': 'The "password" field must be filled in',
     }),
     name: Joi.string().min(2).max(30).messages({
-      "string.min": 'The minimum length of the "name" field is 2',
-      "string.max": 'The maximum length of the "name" field is 30',
+      'string.min': 'The minimum length of the "name" field is 2',
+      'string.max': 'The maximum length of the "name" field is 30',
     }),
   }),
 });
@@ -86,10 +82,10 @@ const validateUser = celebrate({
 const validateAuthentication = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email().messages({
-      "string.empty": 'The "email" field must be filled in',
+      'string.empty': 'The "email" field must be filled in',
     }),
     password: Joi.string().required().messages({
-      "string.empty": 'The "password" field must be filled in',
+      'string.empty': 'The "password" field must be filled in',
     }),
   }),
 });
