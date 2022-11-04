@@ -29,7 +29,7 @@ const createUser = (req, res, next) => {
         name,
       })
     )
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(201).send({ data: user.toJSON() }))
     .catch((err) => {
       internalLogger.error('createUser:', err);
 

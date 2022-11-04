@@ -18,7 +18,6 @@ const userSchema = new mongoose.Schema(
       required: [true, 'The "password" field must be filled in'],
       select: false,
     },
-
     name: {
       type: String,
       default: 'Damien',
@@ -47,5 +46,13 @@ userSchema.statics.findUserByCredentials = function (email, password) {
       });
     });
 };
+
+// removing password from returned object
+userSchema.set('toJSON', {
+  transform(doc, ret) {
+    delete ret.password;
+    return ret;
+  },
+});
 
 module.exports = mongoose.model('user', userSchema);
