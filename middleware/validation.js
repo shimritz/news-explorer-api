@@ -3,10 +3,6 @@ const { Joi, celebrate } = require('celebrate');
 const { isValidObjectId } = require('mongoose');
 const validator = require('validator');
 
-// eslint-disable-next-line operator-linebreak
-const UrlExp =
-  /[(http(s)?)://(www.)?a-zA-Z0-9@:%.+~#=]{2,256}.[a-z]{2,6}([-a-zA-Z0-9@:%+.~#?&//=]*)/i;
-
 // validate the links - recommendation from project instructions
 const validateURL = (value, helpers) => {
   if (validator.isURL(value)) {
@@ -48,7 +44,7 @@ const validateArticle = celebrate({
     }),
     link: Joi.string()
       .required()
-      .pattern(RegExp(UrlExp))
+      .custom(validateURL)
       .message('The "link" field must be a valid URL')
       .messages({
         'string.empty': 'The "link" field must be filled in',
