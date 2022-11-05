@@ -9,6 +9,14 @@ const UnauthorizedError = require('../errors/unauthorized-error');
 const InternalError = require('../errors/internal-error');
 const NotFoundError = require('../errors/not-found-error');
 const { internalLogger } = require('../utils/logger');
+const {
+  CREATED,
+  SUCCESS,
+  USER_NOT_FOUND_MESSAGE,
+  DATA_EXIST_MESSAGE,
+  SERVER_ERROR_MESSAGE,
+  UNAUTHORIZED_MESSAGE,
+} = require('../utils/constants');
 
 const createUser = (req, res, next) => {
   // eslint-disable-next-line object-curly-newline
@@ -16,9 +24,7 @@ const createUser = (req, res, next) => {
   Users.findOne({ email })
     .then((user) => {
       if (user) {
-        return next(
-          new ConflictError('The user with the provided email already exists')
-        );
+        return next(new ConflictError(DATA_EXIST_MESSAGE));
       }
       return bcrypt.hash(password, 10);
     })
@@ -29,7 +35,7 @@ const createUser = (req, res, next) => {
         name,
       })
     )
-    .then((user) => res.status(201).send({ data: user.toJSON() }))
+    .then((user) => res.status(CREATED).send({ data: user.toJSON() }))
     .catch((err) => {
       internalLogger.error('createUser:', err);
 
@@ -42,7 +48,7 @@ const createUser = (req, res, next) => {
           )
         );
       } else {
-        next(new InternalError('Somethig went wrong'));
+        next(new InternalError(SERVER_ERROR_MESSAGE));
       }
     });
 };
@@ -59,33 +65,33 @@ const login = (req, res, next) => {
     })
     .catch((err) => {
       internalLogger.error('login:', err);
-      next(new UnauthorizedError('Autorization error accured'));
+      next(new UnauthorizedError(UNAUTHORIZED_MESSAGE));
     });
 };
 
 const getUserById = (req, res, next) => {
   const { id } = req.params;
   Users.findById(id)
-    .orFail(() => new NotFoundError('No user with given id found'))
+    .orFail(() => new NotFoundError(USER_NOT_FOUND_MESSAGE))
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.status(SUCCESS).send({ data: user });
     })
     .catch((err) => {
       internalLogger.error('getUserById:', err);
-      next(new InternalError('Something went wrong'));
+      next(new InternalError(SERVER_ERROR_MESSAGE));
     });
 };
 
 const getCurrentUser = (req, res, next) => {
   const currentUser = req.user._id;
   Users.findById(currentUser)
-    .orFail(() => new NotFoundError('No user with given id found'))
+    .orFail(() => new NotFoundError(USER_NOT_FOUND_MESSAGE))
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.status(SUCCESS).send({ data: user });
     })
     .catch((err) => {
       internalLogger.error('getCurrentUser:', err);
-      next(new InternalError('Something went wrong'));
+      next(new InternalError(SERVER_ERROR_MESSAGE));
     });
 };
 

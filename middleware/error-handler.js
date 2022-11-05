@@ -1,9 +1,13 @@
+const { SERVER_ERROR } = require('../utils/constants');
+
 const errorHandler = (err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
+  const statusCode = err.statusCode || SERVER_ERROR;
 
   // eslint-disable-next-line operator-linebreak
   const message =
-    statusCode === 500 ? 'An error has occured on the server' : err.message;
+    statusCode === SERVER_ERROR
+      ? 'An error has occured on the server'
+      : err.message;
   res.status(statusCode).send({ message });
   next(err);
 };

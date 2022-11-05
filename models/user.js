@@ -1,12 +1,17 @@
 const { default: mongoose } = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const {
+  MIN_STR_MESSAGE,
+  MAX_STR_MESSAGE,
+  EMPTY_STR_MESSAGE,
+} = require('../utils/constants');
 
 const userSchema = new mongoose.Schema(
   {
     email: {
       type: String,
-      required: [true, 'The "email" field must be filled in'],
+      required: [true, EMPTY_STR_MESSAGE],
       unique: true,
       validate: {
         validator: (v) => validator.isEmail(v),
@@ -15,14 +20,14 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, 'The "password" field must be filled in'],
+      required: [true, EMPTY_STR_MESSAGE],
       select: false,
     },
     name: {
       type: String,
-      required: [true, 'The "name" field must be filled in'],
-      minlength: [2, 'The minimum length of the "name" field is 2'],
-      maxlength: [30, 'The maximum length of the "name" field is 30'],
+      required: [true, EMPTY_STR_MESSAGE],
+      minlength: [2, MIN_STR_MESSAGE],
+      maxlength: [30, MAX_STR_MESSAGE],
     },
   },
   { versionKey: false }
@@ -49,6 +54,7 @@ userSchema.statics.findUserByCredentials = function (email, password) {
 // removing password from returned object
 userSchema.set('toJSON', {
   transform(doc, ret) {
+    // eslint-disable-next-line no-param-reassign
     delete ret.password;
     return ret;
   },

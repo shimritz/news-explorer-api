@@ -4,16 +4,22 @@ const BadRequestError = require('../errors/bad-request-error');
 const ForbiddenError = require('../errors/forbidden-error');
 const InternalError = require('../errors/internal-error');
 const { internalLogger } = require('../utils/logger');
+const {
+  CREATED,
+  SUCCESS,
+  SERVER_ERROR_MESSAGE,
+  INVALID_DATA_MESSAGE,
+} = require('../utils/constants');
 
 const getSavedArticles = (req, res, next) => {
   const ownerId = req.user._id;
 
   Article.find({ owner: ownerId })
     .orFail(() => new NotFoundError('No articles found'))
-    .then((articles) => res.status(200).send({ data: articles }))
+    .then((articles) => res.status(SUCCESS).send({ data: articles }))
     .catch((err) => {
       internalLogger.error('getSavedArticles:', err);
-      next(new InternalError('Somethig went wrong'));
+      next(new InternalError(SERVER_ERROR_MESSAGE));
     });
 };
 
@@ -32,13 +38,13 @@ const createArticle = (req, res, next) => {
     image,
     owner,
   })
-    .then((article) => res.status(201).send({ data: article }))
+    .then((article) => res.status(CREATED).send({ data: article }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Data format is incorrect'));
+        next(new BadRequestError(INVALID_DATA_MESSAGE));
       } else {
         internalLogger.error('createArticle:', err);
-        next(new InternalError('Something went wrong'));
+        next(new InternalError(SERVER_ERROR_MESSAGE));
       }
     });
 };
@@ -47,7 +53,9 @@ const createArticle = (req, res, next) => {
 const deleteArticle = (req, res, next) => {
   const { id } = req.params;
   Article.findById(id)
-    .orFail(() => new NotFoundError('No article found for the specified id'))
+    .orFail(() =>
+      next(new NotFoundError('No article found for the specified id'))
+    )
     .then((article) => {
       if (!article.owner.equals(req.user._id)) {
         internalLogger.error(
@@ -61,7 +69,7 @@ const deleteArticle = (req, res, next) => {
     })
     .catch((err) => {
       internalLogger.error('deleteArticle:', err);
-      next(new InternalError('Something went wrong'));
+      next(new InternalError(SERVER_ERROR_MESSAGE));
     });
 };
 
