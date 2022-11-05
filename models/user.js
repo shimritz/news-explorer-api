@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      default: 'Damien',
       required: [true, 'The "name" field must be filled in'],
       minlength: [2, 'The minimum length of the "name" field is 2'],
       maxlength: [30, 'The maximum length of the "name" field is 30'],
