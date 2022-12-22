@@ -1,6 +1,7 @@
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const express = require('express');
+const cors = require('cors');
 
 const { errors } = require('celebrate');
 const mongoose = require('mongoose');
@@ -14,6 +15,7 @@ const router = require('./routes/index');
 mongoose.connect(DB_ADDRESS);
 const app = express();
 app.use(helmet());
+app.use(cors());
 // applying the rate-limiter
 app.use(limiter);
 
