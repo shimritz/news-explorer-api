@@ -1,6 +1,3 @@
-// VALIDATION REGEX
-// const isUrl =
-//   /[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_+.~#?&//=]*)?/gi;
 // STATUS CODE
 const CREATED = 201;
 const SUCCESS = 200;
@@ -12,7 +9,7 @@ const SERVER_ERROR = 500;
 // STATUS MESSAGES
 const INVALID_DATA_MESSAGE = 'Invalid input';
 const USER_NOT_FOUND_MESSAGE = 'No user with given id found';
-const UNAUTHORIZED_MESSAGE = 'Authorization Required';
+const UNAUTHORIZED_MESSAGE = 'Invalid credentials';
 const SERVER_ERROR_MESSAGE = 'An error accured on the server';
 const DATA_EXIST_MESSAGE = 'This user already exist';
 // VALIDATION MESSAGES

@@ -15,7 +15,6 @@ const getSavedArticles = (req, res, next) => {
   const ownerId = req.user._id;
 
   Article.find({ owner: ownerId })
-    .orFail(() => new NotFoundError('No articles found'))
     .then((articles) => res.status(SUCCESS).send({ data: articles }))
     .catch((err) => {
       internalLogger.error('getSavedArticles:', err);

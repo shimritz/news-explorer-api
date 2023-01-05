@@ -33,7 +33,6 @@ const validateObjId = celebrate({
 
 const validateArticle = celebrate({
   body: Joi.object().keys({
-    // eslint-disable-next-line newline-per-chained-call
     keyword: Joi.string().required().messages({
       'string.required': EMPTY_STR_MESSAGE,
     }),
@@ -49,17 +48,19 @@ const validateArticle = celebrate({
     source: Joi.string().required().messages({
       'string.empty': EMPTY_STR_MESSAGE,
     }),
-    link: Joi.string()
-      .required()
-      .custom(validateURL)
-
-      .messages({
-        'string.empty': 'The "link" field must be filled in',
-        'string.uri': VALID_URL_MESSAGE,
-      }),
+    link: Joi.string().required().custom(validateURL).messages({
+      'string.empty': 'The "link" field must be filled in',
+      'string.uri': VALID_URL_MESSAGE,
+    }),
     image: Joi.string().required().custom(validateURL).messages({
       'string.empty': 'The "link" field must be filled in',
       'string.uri': VALID_URL_MESSAGE,
+    }),
+    owner: Joi.string().custom((value, helpers) => {
+      if (isValidObjectId(value)) {
+        return value;
+      }
+      return helpers.message('Invalid id');
     }),
   }),
 });

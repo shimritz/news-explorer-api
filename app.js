@@ -15,7 +15,13 @@ const router = require('./routes/index');
 mongoose.connect(DB_ADDRESS);
 const app = express();
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: 'https://news-explorer-sz.students.nomoredomainssbs.ru',
+    optionsSuccessStatus: 200,
+  })
+);
+
 // applying the rate-limiter
 app.use(limiter);
 
