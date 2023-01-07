@@ -1,4 +1,4 @@
-const { PORT = 3001 } = process.env;
+const { PORT = 3000 } = process.env;
 
 const express = require('express');
 const cors = require('cors');
@@ -27,7 +27,6 @@ app.use(
   })
 );
 
-// applying the rate-limiter
 app.use(limiter);
 
 app.use(express.json());
