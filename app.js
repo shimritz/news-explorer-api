@@ -1,4 +1,4 @@
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const express = require('express');
 const cors = require('cors');
@@ -12,12 +12,17 @@ const { errorHandler } = require('./middleware/error-handler');
 const { DB_ADDRESS } = require('./utils/config');
 const router = require('./routes/index');
 
+const origin =
+  process.env.NODE_ENV === 'production'
+    ? 'https://news-explorer-sz.students.nomoredomainssbs.ru'
+    : 'http://localhost:3000';
+
 mongoose.connect(DB_ADDRESS);
 const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: 'https://news-explorer-sz.students.nomoredomainssbs.ru',
+    origin,
     optionsSuccessStatus: 200,
   })
 );
